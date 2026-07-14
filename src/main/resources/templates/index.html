@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+   <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+      <title>企业网页展示样例</title>
+      <meta name="keywords" content="企业展示,产品介绍,解决方案">
+      <meta name="description" content="企业网页展示样例 - 专业的企业门户网站">
+      <meta name="author" content="">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/element-plus@2.5.0/dist/index.css">
+      <link th:href="@{/css/home.css}" rel="stylesheet">
+   </head>
+   <body>
+      <div id="app">
+         <el-container>
+            <el-header class="header-main">
+               <el-row align="middle" justify="space-between">
+                  <el-col :span="12">
+                     <el-row>
+                        <el-col :span="24">
+                           <h1 class="logo-title">企业网页展示样例</h1>
+                        </el-col>
+                     </el-row>
+                  </el-col>
+                  <el-col :span="12">
+                     <el-menu :default-active="activeMenu" mode="horizontal" background-color="transparent" text-color="#fff" active-text-color="#409EFF">
+                        <el-menu-item index="home" @click="navigate('/home')">首页</el-menu-item>
+                        <el-menu-item index="services" @click="navigate('/services')">产品介绍</el-menu-item>
+                        <el-menu-item index="solution" @click="navigate('/solution')">解决方案</el-menu-item>
+                        <el-menu-item index="blog" @click="navigate('/blog')">专利荣誉</el-menu-item>
+                        <el-menu-item index="successful" @click="navigate('/successful')">成功案例</el-menu-item>
+                        <el-menu-item index="about" @click="navigate('/about')">关于我们</el-menu-item>
+                     </el-menu>
+                  </el-col>
+               </el-row>
+            </el-header>
+
+            <el-main>
+               <el-carousel height="500px" indicator-position="bottom" arrow="always">
+                  <el-carousel-item v-for="item in 3" :key="item">
+                     <div class="carousel-content">
+                        <h1 class="carousel-title">企业网页展示样例</h1>
+                        <p class="carousel-subtitle">Enterprise Website Display Sample</p>
+                        <el-button type="primary" size="large" @click="navigate('/about')">了解更多</el-button>
+                     </div>
+                  </el-carousel-item>
+               </el-carousel>
+
+               <el-divider content-position="left">
+                  <el-tag type="primary" size="large">产品展示</el-tag>
+               </el-divider>
+               <el-row :gutter="20" v-if="loading.products">
+                  <el-col :span="8" v-for="i in 3" :key="i">
+                     <el-card shadow="hover" class="product-card">
+                        <el-skeleton :rows="3" animated />
+                     </el-card>
+                  </el-col>
+               </el-row>
+               <el-row :gutter="20" v-else>
+                  <el-col :span="8" v-for="(cp, index) in products" :key="index">
+                     <el-card shadow="hover" class="product-card">
+                        <img :src="cp.product_image" class="product-img" />
+                        <el-button type="primary" @click="navigate('/services')">查看详情</el-button>
+                     </el-card>
+                  </el-col>
+               </el-row>
+
+               <el-divider content-position="left">
+                  <el-tag type="success" size="large">专利介绍</el-tag>
+               </el-divider>
+               <el-row v-if="loading.patents" style="margin-bottom: 30px;">
+                  <el-col :span="12">
+                     <el-card>
+                        <el-skeleton :rows="4" animated />
+                     </el-card>
+                  </el-col>
+                  <el-col :span="12">
+                     <el-skeleton :rows="1" animated style="height: 250px;" />
+                  </el-col>
+               </el-row>
+               <el-row v-else v-for="(zl, index) in patents" :key="index" style="margin-bottom: 30px;">
+                  <el-col :span="12">
+                     <el-card>
+                        <template #header>
+                           <span>{{ zl.patents_name }}</span>
+                        </template>
+                        <p>{{ zl.patents_brief }}</p>
+                        <el-button type="success" @click="navigate('/blog')">了解详情</el-button>
+                     </el-card>
+                  </el-col>
+                  <el-col :span="12">
+                     <el-image :src="zl.patents_image" fit="cover" style="height: 250px;" />
+                  </el-col>
+               </el-row>
+
+               <el-divider content-position="left">
+                  <el-tag type="warning" size="large">轮播展示</el-tag>
+               </el-divider>
+               <el-card shadow="hover" v-if="loading.slideshows">
+                  <el-skeleton :rows="3" animated style="height: 300px;" />
+               </el-card>
+               <el-card shadow="hover" v-else>
+                  <el-carousel height="300px" indicator-position="right">
+                     <el-carousel-item v-for="(item, index) in slideshows" :key="index">
+                        <div class="slideshow-content">
+                           <p>{{ item.image_information }}</p>
+                           <el-image :src="item.image_path_url" fit="cover" style="width: 100%; height: 250px;" />
+                        </div>
+                     </el-carousel-item>
+                  </el-carousel>
+               </el-card>
+
+               <el-divider content-position="left">
+                  <el-tag type="danger" size="large">为什么选择我们</el-tag>
+               </el-divider>
+               <el-row :gutter="20">
+                  <el-col :span="6" v-for="(feature, index) in features" :key="index">
+                     <el-card shadow="hover" class="feature-card">
+                        <el-icon :size="48" color="#409EFF">
+                           <component :is="feature.icon" />
+                        </el-icon>
+                        <h3>{{ feature.title }}</h3>
+                        <p>{{ feature.description }}</p>
+                     </el-card>
+                  </el-col>
+               </el-row>
+            </el-main>
+
+            <el-footer class="footer-main">
+               <el-row>
+                  <el-col :span="8">
+                     <h3>企业网页展示样例</h3>
+                     <p>专业的企业门户网站解决方案</p>
+                  </el-col>
+                  <el-col :span="8">
+                     <h3>联系方式</h3>
+                     <p th:text="'电话：' + companyPhone"></p>
+                     <p>邮箱：contact@example.com</p>
+                  </el-col>
+                  <el-col :span="8">
+                     <h3>快速链接</h3>
+                     <el-link href="/home">首页</el-link>
+                     <el-link href="/services">产品介绍</el-link>
+                     <el-link href="/about">关于我们</el-link>
+                  </el-col>
+               </el-row>
+               <el-divider style="margin: 10px 0;" />
+               <p style="text-align: center; color: #999;">Copyright © 2024 企业网页展示样例 版权所有</p>
+            </el-footer>
+         </el-container>
+      </div>
+
+      <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/element-plus@2.5.0/dist/index.full.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@element-plus/icons-vue@2.3.1/dist/index.iife.min.js"></script>
+      <script th:src="@{/js/home.js}"></script>
+   </body>
+</html>
